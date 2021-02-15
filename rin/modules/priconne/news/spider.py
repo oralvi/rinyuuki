@@ -52,31 +52,15 @@ class BaseSpider(abc.ABC):
 
 
 
-class SonetSpider(BaseSpider):
-    url = "http://www.princessconnect.so-net.tw/news/"
-    src_name = "台服官网"
+class cygamesSpider(BaseSpider):
+    url = "https://priconne-redive.jp"
+    src_name = "日服官网"
 
     @staticmethod
     async def get_items(resp:aiorequests.AsyncResponse):
         soup = BeautifulSoup(await resp.text, 'lxml')
         return [
             Item(idx=dd.a["href"],
-                 content=f"{dd.text}\n▲www.princessconnect.so-net.tw{dd.a['href']}"
+                 content=f"{dd.text}\n▲{dd.a['href']}"
             ) for dd in soup.find_all("dd")
         ]
-
-
-
-class BiliSpider(BaseSpider):
-    url = "http://api.biligame.com/news/list?gameExtensionId=267&positionId=2&pageNum=1&pageSize=7&typeId="
-    src_name = "B服官网"
-
-    @staticmethod
-    async def get_items(resp:aiorequests.AsyncResponse):
-        content = await resp.json()
-        items = [
-            Item(idx=n["id"],
-                 content="{title}\n▲game.bilibili.com/pcr/news.html#news_detail_id={id}".format_map(n)
-            ) for n in content["data"]
-        ]
-        return items
