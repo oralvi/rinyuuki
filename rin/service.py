@@ -211,7 +211,7 @@ class Service:
             word = (word, )
         def deco(func) -> Callable:
             @wraps(func)
-            async def wrapper(bot: HoshinoBot, event: CQEvent):
+            async def wrapper(bot: RinYuuki, event: CQEvent):
                 if len(event.message) != 1 or event.message[0].data['text']:
                     self.logger.info(f'Message {event.message_id} is ignored by fullmatch condition.')
                     return

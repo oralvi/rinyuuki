@@ -5,4 +5,4 @@ from aiocqhttp import Event as CQEvent
 from nonebot import (CommandSession, CQHttpError, Message, MessageSegment,
                      NLPSession, NoticeSession, RequestSession)
 
-from . import HoshinoBot
+from . import RinYuuki

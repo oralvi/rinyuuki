@@ -11,11 +11,11 @@ from . import config
 __version__ = '2.1.0'
 
 _bot = None
-HoshinoBot = nonebot.NoneBot
+RinYuuki = nonebot.NoneBot
 os.makedirs(os.path.expanduser('~/.rin'), exist_ok=True)
 logger = new_logger('rin', config.DEBUG)
 
-def init() -> HoshinoBot:
+def init() -> RinYuuki:
     global _bot
     nonebot.init(config)
     _bot = nonebot.get_bot()
@@ -41,7 +41,7 @@ async def _finish(event, message, **kwargs):
     raise CanceledException('ServiceFunc of HoshinoBot finished.')
 
 
-def get_bot() -> HoshinoBot:
+def get_bot() -> RinYuuki:
     if _bot is None:
         raise ValueError('HoshinoBot has not been initialized')
     return _bot

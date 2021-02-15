@@ -15,3 +15,4 @@ beautifulsoup4==4.9.3
 dataclasses
 Pillow==8.1.0
 TwitterAPI==2.6.5
+logzero
