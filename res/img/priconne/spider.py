@@ -85,4 +85,4 @@ if __name__ == '__main__':
     #spider.download_icon_unit(start=1001, end=1200, star=6)
     #spider.download_icon_unit(start=1801, end=1805, star=3)
     # 如果需要爬取漫画，取消掉下面的这行注释
-    spider.download_comic(start=1, end=300, only_index=False)
+    spider.download_comic(start=230, end=300, only_index=False)
