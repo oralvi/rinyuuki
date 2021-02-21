@@ -31,4 +31,4 @@ async def handle_message(bot, event: CQEvent, _):
     except Exception as e:
         sf.sv.logger.error(f'{type(e)} occured when {sf.__name__} handling message {event.message_id}.')
         sf.sv.logger.exception(e)
-    raise CanceledException(f'Handled by {trigger_name} of Hoshino')
+    raise CanceledException(f'Handled by {trigger_name} of Rin')
