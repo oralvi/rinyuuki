@@ -1,12 +1,12 @@
 import random
 
-from rin import util
+from hoshino import util
 from .. import chara
 
 
 class Gacha(object):
 
-    def __init__(self, pool_name:str = "MIX"):
+    def __init__(self, pool_name:str="cn"):
         super().__init__()
         self.load_pool(pool_name)
 
