@@ -3,9 +3,9 @@ import random
 from collections import defaultdict
 import re
 
-from hoshino import Service, priv, util
-from hoshino.typing import *
-from hoshino.util import DailyNumberLimiter, concat_pic, pic2b64, silence
+from rin import Service, priv, util
+from rin.typing import *
+from rin.util import DailyNumberLimiter, concat_pic, pic2b64, silence
 
 from .. import chara
 from .gacha import Gacha
@@ -32,7 +32,7 @@ TENJO_EXCEED_NOTICE = f'您今天已经抽过{tenjo_limit.max}张天井券了，
 POOL = ('MIX', 'JP', 'TW', 'BL')
 DEFAULT_POOL = POOL[0]
 
-_pool_config_file = os.path.expanduser('~/.hoshino/group_pool_config.json')
+_pool_config_file = os.path.expanduser('~/.rin/group_pool_config.json')
 _group_pool = {}
 try:
     with open(_pool_config_file, encoding='utf8') as f:
