@@ -2,9 +2,9 @@
 from os import stat
 from nonebot import on_command, get_bot, scheduler
 from requests.sessions import session
-from hoshino import aiorequests, priv
+from rin import aiorequests, priv
 from ast import literal_eval
-import hoshino
+import rin
 import os, json
 from .. import _pcr_data
 from ..chara import download_chara_icon, roster
@@ -33,7 +33,7 @@ async def get_online_pcrdata():
     '''
     online_pcrdata = await aiorequests.get(url=online_pcr_data_url, timeout=10, verify=False)
     if online_pcrdata.status_code != 200:
-        hoshino.logger.error(f'获取在线角色数据时发生错误{online_pcrdata.status_code}')
+        rin.logger.error(f'获取在线角色数据时发生错误{online_pcrdata.status_code}')
         return {}
 
     # 移除开头的'CHARA_NAME = ', 格式化为json便于处理
@@ -49,12 +49,12 @@ async def update_pcrdata():
     '''
     online_pcrdata = await get_online_pcrdata()
     
-    hoshino.logger.info('开始对比角色数据')
+    rin.logger.info('开始对比角色数据')
     if online_pcrdata == {}:
         return -1
     for id in online_pcrdata:
         if id not in _pcr_data.CHARA_NAME and id != 9401:
-            hoshino.logger.info(f'已开始更新角色{id}的数据和图标')
+            rin.logger.info(f'已开始更新角色{id}的数据和图标')
             # 由于返回数据可能出现全半角重复, 做一定程度的兼容性处理, 会将所有全角替换为半角, 并移除重复别称
             for i, name in enumerate(online_pcrdata[id]):
                 name_format = name.replace('（', '(')
@@ -80,7 +80,7 @@ def ids2names(ids: list) -> list:
         if id in _pcr_data.CHARA_NAME:
             res.append(_pcr_data.CHARA_NAME[id][0])
         else:
-            hoshino.logger.warning(f'缺少角色{id}的信息, 请注意更新静态资源')
+            rin.logger.warning(f'缺少角色{id}的信息, 请注意更新静态资源')
     return res
 
 
@@ -94,7 +94,7 @@ def get_local_ver() -> int:
             local_ver = int(lvj["ver"])
     else:
         local_ver = 0
-    hoshino.logger.info(f'检查卡池更新, 本地卡池版本{local_ver}')
+    rin.logger.info(f'检查卡池更新, 本地卡池版本{local_ver}')
     return local_ver
 
 
@@ -105,12 +105,12 @@ async def get_online_ver() -> int:
     online_pool_ver = await aiorequests.get(url=online_ver_url, timeout=10, verify=False)
 
     if online_pool_ver.status_code != 200:
-        hoshino.logger.error(f'获取在线卡池版本时发生错误{online_pool_ver.status_code}')
+        rin.logger.error(f'获取在线卡池版本时发生错误{online_pool_ver.status_code}')
         return online_pool_ver.status_code
     online_pool_ver_json = await online_pool_ver.json()
     online_ver = int(online_pool_ver_json["ver"])
 
-    hoshino.logger.info(f'检查卡池更新, 在线卡池版本{online_ver}')
+    rin.logger.info(f'检查卡池更新, 在线卡池版本{online_ver}')
     return online_ver
 
 
@@ -119,7 +119,7 @@ def update_local_ver(ver: int) -> None:
     修改本地版本号
     '''
     local_ver_json = {"ver": str(ver)}
-    hoshino.logger.info(f'写入本地版本号文件')
+    rin.logger.info(f'写入本地版本号文件')
     with open(local_ver_path, 'w+', encoding='utf-8') as lvf:
         json.dump(local_ver_json, lvf, indent=4, ensure_ascii=False)
 
@@ -128,10 +128,10 @@ async def get_online_pool():
     '''
     获取在线卡池, 返回json格式
     '''
-    hoshino.logger.info(f'开始获取在线卡池')
+    rin.logger.info(f'开始获取在线卡池')
     online_pool_f = await aiorequests.get(online_pool_url, timeout=10, verify=False)
     if online_pool_f.status_code != 200:
-        hoshino.logger.error(f'获取在线卡池时发生错误{online_pool_f.status_code}')
+        rin.logger.error(f'获取在线卡池时发生错误{online_pool_f.status_code}')
         return online_pool_f.status_code
     online_pool = await online_pool_f.json()
     return online_pool
@@ -146,7 +146,7 @@ def update_local_pool(online_pool) -> None:
         local_pool = json.load(lf)
 
     # 备份本地卡池
-    hoshino.logger.info(f'开始备份本地卡池')
+    rin.logger.info(f'开始备份本地卡池')
     with open(local_pool_backup_path, 'w', encoding='utf-8') as backup:
         json.dump(local_pool, backup, indent=4, ensure_ascii=False)
 
@@ -176,10 +176,10 @@ def update_local_pool(online_pool) -> None:
                     if local_pool[server][star] == []:
                         # MIX池会出现无UP角色的空列表, 然后偷偷换成我老婆
                         local_pool[server][star] = ['镜华(万圣节)']
-                        hoshino.logger.info(f'{server}卡池{star}列表为空, 已替换为镜华(万圣节)')
+                        rin.logger.info(f'{server}卡池{star}列表为空, 已替换为镜华(万圣节)')
 
     # 将新卡池写入文件
-    hoshino.logger.info(f'开始写入本地卡池文件')
+    rin.logger.info(f'开始写入本地卡池文件')
     with open(local_pool_path, 'w+', encoding='utf-8') as lf:
         json.dump(local_pool, lf, indent=4, ensure_ascii=False)
 
@@ -197,13 +197,13 @@ async def update_pool(force=False) -> int:
     # 获取远程卡池
     online_pool = await get_online_pool()
     if type(online_pool) == int:
-        hoshino.error(f'获取在线卡池时发生错误{online_pool}')
+        rin.error(f'获取在线卡池时发生错误{online_pool}')
         return online_pool
 
     # 获取远程版本号
     online_ver = await get_online_ver()
     if online_ver < 1000:
-        hoshino.error(f'获取在线卡池版本时发生错误{online_ver}')
+        rin.error(f'获取在线卡池版本时发生错误{online_ver}')
         return online_ver
 
     # 比较本地版本号
@@ -255,7 +255,7 @@ async def update_pool_force_chat(session):
 @scheduler.scheduled_job('cron', hour='17', minute='05')
 async def update_pool_sdj():
     bot = get_bot()
-    master_id = hoshino.config.SUPERUSERS[0]
+    master_id = rin.config.SUPERUSERS[0]
 
     self_ids = list(bot._wsr_api_clients)
     sid = self_ids[0]

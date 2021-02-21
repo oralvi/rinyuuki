@@ -1,6 +1,6 @@
 import random
 
-from hoshino import util
+from rin import util
 from .. import chara
 
 
