@@ -38,12 +38,12 @@ def init() -> RinYuuki:
 async def _finish(event, message, **kwargs):
     if message:
         await _bot.send(event, message, **kwargs)
-    raise CanceledException('ServiceFunc of HoshinoBot finished.')
+    raise CanceledException('ServiceFunc of Rin finished.')
 
 
 def get_bot() -> RinYuuki:
     if _bot is None:
-        raise ValueError('HoshinoBot has not been initialized')
+        raise ValueError('Rin has not been initialized')
     return _bot
 
 
