@@ -52,27 +52,9 @@ class ResImg(ResObj):
             rin.logger.error(f'缺少图片资源：{self.path}')
             raise
 
-class ResRec(ResObj):
-    @property
-    def cqcode(self) -> MessageSegment:
-        if rin.config.RES_PROTOCOL == 'http':
-            return MessageSegment.record(self.url)
-        elif rin.config.RES_PROTOCOL == 'file':
-            return MessageSegment.record(f'file:///{os.path.abspath(self.path)}')
-        else:
-            try:
-                return MessageSegment.text('[语音出错]')
-            except Exception as e:
-                rin.logger.exception(e)
-                return MessageSegment.text('[语音出错]')
-
-
 
 def get(path, *paths):
     return ResObj(os.path.join(path, *paths))
 
 def img(path, *paths):
     return ResImg(os.path.join('img', path, *paths))
-
-def rec(path, *paths):
-    return ResRec(os.path.join('voice', path, *paths))
