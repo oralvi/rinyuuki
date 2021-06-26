@@ -1,10 +1,12 @@
+import time
+
 from peewee import *
 from playhouse.migrate import SqliteMigrator, migrate
 
 from .web_util import rand_string
 
 _db = SqliteDatabase(None)
-_version = 11  # 目前版本
+_version = 14  # 目前版本
 
 MAX_TRY_TIMES = 3
 
@@ -113,6 +115,7 @@ class Clan_subscribe(_BaseModel):
     qqid = IntegerField()
     subscribe_item = SmallIntegerField()
     message = TextField(null=True)
+    created_time = TimestampField(default=time.time())
 
     class Meta:
         indexes = (
@@ -250,5 +253,23 @@ def db_upgrade(old_version):
             migrator.add_column('user', 'notify_preference',
                                 IntegerField(default=1)),
         )
-
+    # if old_version < 12:
+    #     migrate(
+    #         migrator.alter_column_type('clan_group', 'challenging_member_qq_id',
+    #                                    TextField(null=True)),
+    #         migrator.add_column('clan_group', 'lock_member_qq_id',
+    #                             IntegerField(null=True)),
+    #     )
+    if old_version == 12:
+        # revert database version 12
+        migrate(
+            migrator.alter_column_type('clan_group', 'challenging_member_qq_id',
+                                       IntegerField(null=True)),
+            migrator.drop_column('clan_group', 'lock_member_qq_id'),
+        )
+    if old_version < 14:
+        migrate(
+            migrator.add_column('clan_subscribe', 'created_time',
+                                TimestampField(default=time.time()))
+        )
     DB_schema.replace(key='version', value=str(_version)).execute()

@@ -16,7 +16,7 @@ var vm = new Vue({
         send_via_private: false,
         dropMemberVisible: false,
         today: 0,
-        isMobile: false,
+        isToday: false,
     },
     mounted() {
         var thisvue = this;
@@ -51,25 +51,7 @@ var vm = new Vue({
             thisvue.$alert(error, '获取数据失败');
         });
     },
-    beforeMount () {
-        var userAgentInfo = navigator.userAgent;
-        var Agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
-        for (var v = 0; v < Agents.length; v++) {
-            if (userAgentInfo.indexOf(Agents[v]) > 0) {
-                this.isMobile = true
-                break
-            }
-        }
-    },
     methods: {
-        clickCell: function (row, column) {
-            if (column.label === '昵称') {
-                this.$refs.multipleTable.toggleRowExpansion(row)
-            }
-        },
-        getRowClass: function (e) {
-            return e.row.finished === 3 ? 'finishedRow' : ''
-        },
         get_now: function () {
             let d = new Date();
             return Date.parse(d);
@@ -112,7 +94,7 @@ var vm = new Vue({
         },
         report_day: function (event) {
             var thisvue = this;
-			var reportDatetime = (thisvue.reportDate ? (thisvue.reportDate.getTime() - thisvue.reportDate.getTimezoneOffset() * 60000) / 1000  : null);
+            var reportDatetime = (thisvue.reportDate ? (thisvue.reportDate.getTime() - thisvue.reportDate.getTimezoneOffset() * 60000) / 1000  : null);
             axios.post('../api/', {
                 action: 'get_challenge',
                 csrf_token: csrf_token,
@@ -122,7 +104,7 @@ var vm = new Vue({
                     thisvue.$alert(res.data.message, '获取记录失败');
                 } else {
                     thisvue.refresh(res.data.challenges);
-					thisvue.isToday = (thisvue.reportDate ? thisvue.today == Math.floor(reportDatetime / 86400) : true);
+                    thisvue.isToday = (thisvue.reportDate ? thisvue.today == Math.floor(reportDatetime / 86400) : true);
                 }
             }).catch(function (error) {
                 thisvue.$alert(error, '获取记录失败');
