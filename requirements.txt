@@ -17,3 +17,8 @@ Pillow==8.1.0
 TwitterAPI==2.6.5
 logzero
 bs4
+opencc
+arrow
+peewee
+expiringdict
+feedparser
