@@ -4,7 +4,7 @@ config/
 data/
 device.json
 config.hjson
-framework/config.yml
+config.yml
 *.py[cod]
 *$py.class
 log/
