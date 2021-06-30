@@ -88,7 +88,7 @@ async def follow_stream():
         consumer_secret=cfg.consumer_secret,
         access_token=cfg.access_token_key,
         access_token_secret=cfg.access_token_secret,
-        proxy=cfg.proxy,
+        # proxy=cfg.proxy,
     )
     router = TweetRouter()
     router.load(cfg.follows, cfg.media_only_users)
@@ -103,17 +103,17 @@ async def follow_stream():
             if peony.events.tweet(tweet):
                 screen_name = tweet.user.screen_name
                 if screen_name not in router.follows:
-                    continue    # 推主不在订阅列表
+                    continue  # 推主不在订阅列表
                 if peony.events.retweet(tweet):
-                    continue    # 忽略纯转推
+                    continue  # 忽略纯转推
                 reply_to = tweet.get("in_reply_to_screen_name")
                 if reply_to and reply_to != screen_name:
-                    continue    # 忽略对他人的评论，保留自评论
+                    continue  # 忽略对他人的评论，保留自评论
 
                 entry = router.follows[screen_name]
                 media = tweet.get("extended_entities", {}).get("media", [])
                 if entry.media_only and not media:
-                    continue    # 无附带媒体，订阅选项media_only=True时忽略
+                    continue  # 无附带媒体，订阅选项media_only=True时忽略
 
                 msg = format_tweet(tweet)
 
