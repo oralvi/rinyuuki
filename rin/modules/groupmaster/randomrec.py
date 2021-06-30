@@ -8,6 +8,6 @@ import rin
 sv = Service('randomrec', visible=True)
 
 
-@sv.on_command('xcw', only_to_me=False)
+@sv.on_keyword('xcw')
 async def voicetest(bot, ev):
     await bot.send(ev, R.rec('test.silk').cqcode)
