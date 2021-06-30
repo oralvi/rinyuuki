@@ -36,3 +36,4 @@ async def new_year_burst(bot, ev):
     if random.random() < 0.02:
         await bot.send(ev, nyb_player)
 
+
