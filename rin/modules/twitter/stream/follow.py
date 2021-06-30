@@ -88,7 +88,7 @@ async def follow_stream():
         consumer_secret=cfg.consumer_secret,
         access_token=cfg.access_token_key,
         access_token_secret=cfg.access_token_secret,
-        # proxy=cfg.proxy,
+        proxy=cfg.proxy,
     )
     router = TweetRouter()
     router.load(cfg.follows, cfg.media_only_users)
