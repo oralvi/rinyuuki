@@ -10,7 +10,7 @@ ADMIN = 21
 OWNER = 22
 WHITE = 51
 SUPERUSER = 999
-
+SU =SUPERUSER
 from datetime import datetime
 
 import rin
