@@ -14,3 +14,7 @@ async def voicetest(bot, ev):
 @sv.on_keyword('炎王的美妙歌喉')
 async def voicetest(bot, ev):
     await bot.send(ev, R.rec('yanwang.silk').cqcode)
+
+@sv.on_keyword('rickroll')
+async def voicetest(bot, ev):
+    await bot.send(ev, R.rec('nggyu.mp3').cqcode)
