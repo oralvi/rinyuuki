@@ -11,7 +11,7 @@ log/
 .idea/
 # C extensions
 *.so
-
+test/
 # Distribution / packaging
 .Python
 build/
