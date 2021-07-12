@@ -7,7 +7,7 @@ _max = 2  #每日的魔法上限次数
 
 bot_name = rin.config.NICKNAME  #获取bot的呢称(当NICKNAME仅有一个时生效)
 
-EXCEED_NOTICE = f'{bot_name}今天已经使用了{_max}次爆裂魔法哦~~~明天再使用爆裂魔法吧!'  #到上限的提示语，如果不用bot_name可以直接换成名字
+EXCEED_NOTICE = f'凛酱今天已经使用了{_max}次爆裂魔法哦~~~明天再使用爆裂魔法吧!'  #到上限的提示语，如果不用bot_name可以直接换成名字
 _nlmt = DailyNumberLimiter(_max)
 
 EXPLOSION_HELP = '''
@@ -58,7 +58,7 @@ text9 = f'吾名惠惠\n乃至高全能的支配者\n受命于天之力之人\n�
 text10 = f'我名为惠惠\n红魔族第一最强的魔法使\n因为那时候悠悠让我走上爆裂魔法的路\n才有了今天的我\n吹拂吧狂风\n冥想吧爆炎\n爆裂魔法是浪漫\n是将不可能变为可能\n最强的魔法\n「Explosion」'
 
 
-@sv.on_fullmatch(('exo', '爆裂魔法', '来一发', '爆烈魔法', '暴烈魔法'))
+@sv.on_fullmatch(('explosion!', 'explosion', '爆裂魔法', '来一发', '爆裂魔法!', '爆裂魔法！'))
 async def exosend(bot, ev):
     uid = ev['user_id']
     if not _nlmt.check(uid):
