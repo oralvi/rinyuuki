@@ -20,7 +20,7 @@ async def lssv(session: CommandSession):
     verbose_all = args.all
     only_hidden = args.hidden
     if session.ctx['user_id'] in session.bot.config.SUPERUSERS:
-        gid = argvs.group or session.ctx.get('group_id')
+        gid = args.group or session.ctx.get('group_id')
         if not gid:
             session.finish('Usage: -g|--group <group_id> [-a|--all]')
     else:
