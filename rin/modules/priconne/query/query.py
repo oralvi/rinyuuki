@@ -4,12 +4,12 @@ from rin.typing import CQEvent
 from . import sv
 
 rank_jp = '19-4'
-p1 = R.img(f'priconne/quick/1jp1.png').cqcode
-p2 = R.img(f'priconne/quick/1jp2.png').cqcode
-p3 = R.img(f'priconne/quick/1jp3.png').cqcode
-p4 = R.img(f'priconne/quick/2jp1.png').cqcode
-p5 = R.img(f'priconne/quick/2jp2.png').cqcode
-p6 = R.img(f'priconne/quick/2jp3.png').cqcode
+p1 = R.img(f'priconne/quick/1jp1.jpg').cqcode
+p2 = R.img(f'priconne/quick/1jp2.jpg').cqcode
+p3 = R.img(f'priconne/quick/1jp3.jpg').cqcode
+p4 = R.img(f'priconne/quick/2jp1.jpg').cqcode
+p5 = R.img(f'priconne/quick/2jp2.jpg').cqcode
+p6 = R.img(f'priconne/quick/2jp3.jpg').cqcode
 
 
 @sv.on_rex(r'^(\*?([日])服?([012]*))?rank(表|推荐|指南)?$')
