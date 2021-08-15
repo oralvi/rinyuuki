@@ -4,30 +4,40 @@ from rin.typing import CQEvent
 from . import sv
 
 rank_jp = '19-4'
-p4 = R.img(f'priconne/quick/rjp1.png').cqcode
-p5 = R.img(f'priconne/quick/rjp2.png').cqcode
-p6 = R.img(f'priconne/quick/rjp3.png').cqcode
+p1 = R.img(f'priconne/quick/1jp1.png').cqcode
+p2 = R.img(f'priconne/quick/1jp2.png').cqcode
+p3 = R.img(f'priconne/quick/1jp3.png').cqcode
+p4 = R.img(f'priconne/quick/2jp1.png').cqcode
+p5 = R.img(f'priconne/quick/2jp2.png').cqcode
+p6 = R.img(f'priconne/quick/2jp3.png').cqcode
 
 
-@sv.on_rex(r'^(\*?([日])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
+@sv.on_rex(r'^(\*?([日])服?([012]*))?rank(表|推荐|指南)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
     if not is_jp:
-        await bot.send(ev, '\n请问您要查询哪个服务器的rank表？\n*日rank表', at_sender=True)
+        await bot.send(ev, '\n请问您要查询哪家rank表？\n0*GWrank表\n1*とう佬rank表（不定时更新\n2*うさ*アリスrank表（不定时更新', at_sender=True)
         return
     msg = [
         '\n表格仅供参考',
         # '\n※rank表仅供参考，升r有风险，强化需谨慎\n※请以会长要求为准',
     ]
     if is_jp:
-        msg.append(f'※不定期搬运自图中Q群\n日 rank表：')
+
         pos = match.group(3)
-        if not pos or '前' in pos:
+        if not pos or '0' in pos:
+            msg.append(f'※来自GameWith\n日服 rank链接：\n')
+            msg.append(f'https://gamewith.jp/pricone-re/article/show/148926')
+        if '1' in pos:
+            msg.append(f'※来自とう佬@tou21snR\n更新日期210709（不定期更新）\n日服 rank表：\n')
+            msg.append(str(p1))
+            msg.append(str(p2))
+            msg.append(str(p3))
+        if '2' in pos:
+            msg.append(f'※来自うさ*アリス@usausa_1321\n更新日期210717（不定期更新）\n日服 rank表：\n')
             msg.append(str(p4))
-        if not pos or '中' in pos:
             msg.append(str(p5))
-        if not pos or '后' in pos:
             msg.append(str(p6))
         await bot.send(ev, '\n'.join(msg), at_sender=True)
         #await util.silence(ev, 60)
