@@ -27,6 +27,7 @@ follow_collection = [
     Service("moe-artist-twitter", help_="萌系画师推特转发", enable_on_default=False, bundle="artist"),
     Service("depress-artist-twitter", help_="致郁系画师推特转发", enable_on_default=False, bundle="artist"),
     Service("ba-twitter", help_="碧蓝档案推特转发", enable_on_default=False, bundle="buruaka"),
+    Service("keromakura-twitter", help_="ケロQ&枕社相关推特转发", enable_on_default=False, bundle="keromakura"),
 ]
 
 
