@@ -43,7 +43,7 @@ async def luna(bot, ctx):
 
 @sv.on_keyword(('就这'))
 async def jiuzhe(bot, ctx):
-    if random.random() < 0.10:
+    if random.random() < 0.5:
         await bot.send(ctx, R.img('就这.png').cqcode)
 
 
