@@ -38,12 +38,12 @@ async def new_year_burst(bot, ev):
 
 @sv.on_keyword(('露娜', 'luna'))
 async def luna(bot, ctx):
-    if random.random() < 0.5:
+    if random.random() < 0.10:
         await bot.send(ctx, R.img('luna.gif').cqcode)
 
 @sv.on_keyword(('就这'))
 async def jiuzhe(bot, ctx):
-    if random.random() < 0.5:
+    if random.random() < 0.10:
         await bot.send(ctx, R.img('就这.png').cqcode)
 
 
