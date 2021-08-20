@@ -27,7 +27,7 @@ async def chat_neigui(bot, ctx):
 
 nyb_player = f'''{R.img('nyb.gif').cqcode}
 正在播放：New Year Burst
-──●━━━━ 1:10/1:30
+──●━━━━ 1:05/1:30
 ⇆ ㅤ◁ ㅤㅤ❚❚ ㅤㅤ▷ ㅤ↻
 '''.strip()
 
