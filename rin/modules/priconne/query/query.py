@@ -17,7 +17,7 @@ async def rank_sheet(bot, ev):
     match = ev['match']
     is_choosen = match.group(4)
     if not is_choosen:
-        await bot.send(ev, '\n请问您要查询哪家rank表？\n0*GWrank表\n1*とう佬rank表（不定时更新\n2*うさ*アリスrank表（不定时更新', at_sender=True)
+        await bot.send(ev, '\n请问您要查询哪家rank表？（eg.日rank表0）\n0*GWrank表\n1*とう佬rank表（不定时更新\n2*うさ*アリスrank表（不定时更新', at_sender=True)
         return
     msg = [
         '\n表格仅供参考',
