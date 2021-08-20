@@ -15,15 +15,15 @@ p6 = R.img(f'priconne/quick/2jp3.jpg').cqcode
 @sv.on_rex(r'^(\*?([日])服?)?rank(表|推荐|指南)?([012]*)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
-    is_choosen = match.group(4)
-    if not is_choosen:
+    is_chosen = match.group(4)
+    if not is_chosen:
         await bot.send(ev, '\n请问您要查询哪家rank表？（eg.日rank表0）\n0*GWrank表\n1*とう佬rank表（不定时更新\n2*うさ*アリスrank表（不定时更新', at_sender=True)
         return
     msg = [
         '\n表格仅供参考',
         # '\n※rank表仅供参考，升r有风险，强化需谨慎\n※请以会长要求为准',
     ]
-    if is_choosen:
+    if is_chosen:
 
         pos = match.group(4)
         if not pos or '0' in pos:
