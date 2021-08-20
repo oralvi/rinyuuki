@@ -12,7 +12,7 @@ p5 = R.img(f'priconne/quick/2jp2.jpg').cqcode
 p6 = R.img(f'priconne/quick/2jp3.jpg').cqcode
 
 
-@sv.on_rex(r'^(\*?([日])服?([012]*))?rank(表|推荐|指南)?$')
+@sv.on_rex(r'^(\*?([日])服?([012]*))?rank(表|推荐|指南)?([012]*)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
@@ -25,7 +25,7 @@ async def rank_sheet(bot, ev):
     ]
     if is_jp:
 
-        pos = match.group(3)
+        pos = match.group(4)
         if not pos or '0' in pos:
             msg.append(f'※来自GameWith\n日服 rank链接：\n')
             msg.append(f'https://gamewith.jp/pricone-re/article/show/148926')
