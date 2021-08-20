@@ -23,7 +23,7 @@ async def rank_sheet(bot, ev):
         '\n表格仅供参考',
         # '\n※rank表仅供参考，升r有风险，强化需谨慎\n※请以会长要求为准',
     ]
-    if is_jp:
+    if is_choosen:
 
         pos = match.group(4)
         if not pos or '0' in pos:
