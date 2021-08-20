@@ -25,7 +25,7 @@ async def rank_sheet(bot, ev):
     ]
     if is_jp:
 
-        pos = match.group(4)
+        pos = match.group(3)
         if not pos or '0' in pos:
             msg.append(f'※来自GameWith\n日服 rank链接：\n')
             msg.append(f'https://gamewith.jp/pricone-re/article/show/148926')
