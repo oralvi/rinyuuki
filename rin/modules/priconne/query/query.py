@@ -12,7 +12,7 @@ p5 = R.img(f'priconne/quick/2jp2.jpg').cqcode
 p6 = R.img(f'priconne/quick/2jp3.jpg').cqcode
 
 
-@sv.on_rex(r'^(\*?([日])服?([012]*))?rank(表|推荐|指南)?([012]*)?$')
+@sv.on_rex(r'^(\*?([日])服?)?rank(表|推荐|指南)?([012]*)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
