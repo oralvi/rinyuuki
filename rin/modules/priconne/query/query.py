@@ -30,12 +30,12 @@ async def rank_sheet(bot, ev):
             msg.append(f'※来自GameWith\n日服 rank链接：\n')
             msg.append(f'https://gamewith.jp/pricone-re/article/show/148926')
         if '1' in pos:
-            msg.append(f'※来自とう佬@tou21snR\n更新日期210709（不定期更新）\n日服 rank表：\n')
+            msg.append(f'※来自とう佬@tou21snR\n更新日期210816（不定期更新）\n日服 rank表：\n')
             msg.append(str(p1))
             msg.append(str(p2))
             msg.append(str(p3))
         if '2' in pos:
-            msg.append(f'※来自うさ*アリス@usausa_1321\n更新日期210717（不定期更新）\n日服 rank表：\n')
+            msg.append(f'※来自うさ*アリス@usausa_1321\n更新日期210816（不定期更新）\n日服 rank表：\n')
             msg.append(str(p4))
             msg.append(str(p5))
             msg.append(str(p6))
