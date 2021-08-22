@@ -1,0 +1,7 @@
+{
+    "databaseHost": "127.0.0.1",
+    "databasePort": 3306,
+    "databaseUsername": "cbr",
+    "databasePassword": "NewYearBurst!",
+    "databaseName": "clanbattlerecorder"
+}

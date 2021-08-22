@@ -100,6 +100,7 @@ class Service:
         """
         定义一个服务
         配置的优先级别：配置文件 > 程序指定 > 缺省值
+        :rtype: object
         """
         assert not _re_illegal_char.search(
             name), r'Service name cannot contain character in `\/:*?"<>|.`'
