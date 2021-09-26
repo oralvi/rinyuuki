@@ -12,7 +12,7 @@ from nonebot import NoneBot
 from nonebot import MessageSegment as ms
 from nonebot.typing import Context_T
 from rin import util, priv
-
+from .connector import recorder
 from .main import sv, cb_cmd
 from .argparse import ArgParser, ArgHolder, ParseResult
 from .argparse.argtype import *
@@ -25,5 +25,5 @@ USAGE_ADD_MEMBER = '!入会 昵称 (@qq)'
 async def add_member(bot:NoneBot, ctx:Context_T, args:ParseResult):
     uid = args['@'] or args.at or ctx['user_id']
     name = args['']
-    Recorder.addPlayer({name}, {uid}, 'rmk', 'admin')
+    recorder.addPlayer(uid, 3, "admin")
     await bot.send(ctx, f"成员{ms.at(uid)}添加成功！欢迎{name}加入拂晓茶会")

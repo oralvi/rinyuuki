@@ -1,6 +1,6 @@
 import json
 import typing
-
+import rin
 import mysql.connector
 
 
@@ -10,8 +10,7 @@ class Recorder:
 
 
     def __init__(self) -> None:
-        with open('config.json') as f:
-            self.configuration = json.load(f)
+        self.cfg = rin.config.cbt
         self.establishDatabaseConnection()
         self.initializeDatabase()
 
@@ -19,15 +18,15 @@ class Recorder:
     def establishDatabaseConnection(self) -> bool:
         try:
             self.databaseConnection = mysql.connector.connect(
-                database = self.configuration['databaseName'],
-                host = self.configuration['databaseHost'],
-                user = self.configuration['databaseUsername'],
-                password = self.configuration['databasePassword'],
-                port = self.configuration['databasePort'],
+                database = self.cfg.dbname,
+                host = self.cfg.host,
+                user = self.cfg.name,
+                password = self.cfg.pw,
+                port = self.cfg.port,
                 buffered = True
             )
-        except:
-            return False
+        except Exception as e:
+            print(e)
 
 
     def initializeDatabase(self) -> bool:

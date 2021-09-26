@@ -1,4 +1,4 @@
-from .cbt import Recorder
+
 from nonebot import on_command
 from .argparse import ArgParser
 from .exception import *
@@ -10,7 +10,7 @@ sv = Service('cbt')
 SORRY = 'ごめんなさい！嘤嘤嘤(〒︿〒)'
 
 if __name__ == '__main__':
-    recorder = Recorder()
+    recorder=Recorder()
     bosses = {
         1: [1000, 2000, 3000, 4000, 5000],
         2: [1000, 2000, 3000, 4000, 5000],
@@ -29,6 +29,7 @@ if __name__ == '__main__':
     recorder.cancelBattle('kmr') #我不进了
     recorder.reportDamage(3, 'kmr', True, 23333) #报刀，参数为：boss, 玩家, 是否为完整刀, 伤害
 '''
+
 _registry:Dict[str, Tuple[Callable, ArgParser]] = {}
 
 @sv.on_message('group')

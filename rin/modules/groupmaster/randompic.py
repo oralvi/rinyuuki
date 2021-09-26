@@ -57,14 +57,11 @@ async def az(bot, ctx):
     if random.random() < 0.10:
         await bot.send(ctx, R.img('啊这.jpg').cqcode)
 
-@sv.on_keyword(('我laopo', 'wlp', '我老婆'))
+@sv.on_keyword(('laopo', 'wlp', '老婆'))
 async def hanlaopo(bot, ctx):
     if random.random() < 0.10:
         await bot.send(ctx, R.img(f"laopo{random.randint(1, 2)}.jpg").cqcode)
 
-@sv.on_keyword(('se', '涩', '色图'))
-async def buzhunkansetu(bot, ctx):
-    if random.random() < 0.10:
-        await bot.send(ctx, R.img(f"涩图审核{random.randint(1, 2)}.jpg").cqcode)
+
 
 

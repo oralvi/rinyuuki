@@ -17,13 +17,13 @@ sv = Service('chat', visible=False)
 async def say_sorry(bot, ev):
     await bot.send(ev, 'ごめんなさい！嘤嘤嘤(〒︿〒)')
 
-
-@sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
+'''@sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
 async def chat_waifu(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, R.img(f"laopo{random.randint(1, 2)}.jpg").cqcode)
     else:
-        await bot.send(ev, 'mua~')
+        await bot.send(ev, 'mua~')'''
+
 
 
 @sv.on_fullmatch('老公', only_to_me=True)
