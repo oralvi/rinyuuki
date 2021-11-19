@@ -9,6 +9,7 @@ config.yml
 *$py.class
 log/
 .idea/
+rin-env/
 # C extensions
 *.so
 test/
