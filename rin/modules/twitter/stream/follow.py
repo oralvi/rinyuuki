@@ -30,6 +30,8 @@ follow_collection = [
     Service("keromakura-twitter", help_="ケロQ&枕社相关推特转发", enable_on_default=False, bundle="keromakura"),
     Service("shadowverse-twitter", help_="影之诗国际/日服相关推特转发", enable_on_default=False, bundle="shadowverse"),
     Service("H-twitter", help_="涩涩相关推特转发", enable_on_default=False, bundle="H"),
+    Service("ip-twitter", help_="偶像荣耀相关推特转发", enable_on_default=False, bundle="idolypride"),
+    Service("cast-twitter", help_="声优相关推特转发", enable_on_default=False, bundle="cast"),
 ]
 
 
