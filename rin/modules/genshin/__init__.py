@@ -4,13 +4,13 @@ from .getDB import (CheckDB, GetAward, GetCharInfo, GetDaily, GetMysInfo,
                     connectDB, cookiesDB, deletecache, selectDB, get_alots,
                     GetEnemiesInfo,GetAudioInfo)
 from nonebot import *
-from hoshino import Service,R,priv,util
-from hoshino.typing import MessageSegment,CQEvent, HoshinoBot
+from rin import Service,R,priv,util
+from rin.typing import MessageSegment,CQEvent, RinYuuki
 
 import requests,random,os,json,re,time,datetime,string,base64,math
 
 import threading
-import hoshino
+import rin
 import asyncio
 import hashlib
 import sqlite3
@@ -141,7 +141,7 @@ audio_json = {
 }
 
 @sv.on_prefix('语音')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     message = message.replace(' ', "")
     name = ''.join(re.findall('[\u4e00-\u9fa5]', message))
@@ -170,7 +170,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
             await bot.send(ev,"不存在该语音ID或者不存在该角色。")
 
 @sv.on_fullmatch('活动列表')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     img_path = os.path.join(FILE2_PATH,"event.jpg")
     while(1):
         if os.path.exists(img_path):
@@ -185,27 +185,27 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
     await bot.send(ev,im)
 
 @sv.on_fullmatch('御神签')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     qid = ev.sender["user_id"]
     raw_data = await get_alots(qid)
     im = base64.b64decode(raw_data).decode("utf-8")
     await bot.send(ev,im)
 
 @sv.on_prefix('材料')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     message = message.replace(' ', "")
     im = await char_wiki(message,"costs")
     await bot.send(ev,im)
     
 @sv.on_prefix('原魔')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     im = await enemies_wiki(message)
     await bot.send(ev,im)
 
 @sv.on_prefix('天赋')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     name = ''.join(re.findall('[\u4e00-\u9fa5]', message))
     num = re.findall(r"[0-9]+", message)
@@ -216,7 +216,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
     await bot.send(ev,im)
 
 @sv.on_prefix('武器')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     name = ''.join(re.findall('[\u4e00-\u9fa5]', message))
     level = re.findall(r"[0-9]+", message)
@@ -227,7 +227,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
     await bot.send(ev,im,at_sender=True)
 
 @sv.on_prefix('角色')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     message = message.replace(' ', "")
     name = ''.join(re.findall('[\u4e00-\u9fa5]', message))
@@ -249,7 +249,7 @@ async def enemies_wiki(name):
     return im
 
 @sv.on_prefix('命座')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     num = int(re.findall(r"\d+", message)[0])  # str
     m = ''.join(re.findall('[\u4e00-\u9fa5]', message))
@@ -269,7 +269,7 @@ async def delete():
     await draw_event_pic()
 
 @sv.on_fullmatch('全部重签')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
     await bot.send(ev,"已开始执行")
@@ -369,7 +369,7 @@ async def setting(ctx):
 
 #群聊开启 自动签到 和 推送树脂提醒 功能
 @sv.on_prefix('开启')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     m = ''.join(re.findall('[\u4e00-\u9fa5]',message))
     
@@ -411,7 +411,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
             
 #群聊关闭 自动签到 和 推送树脂提醒 功能
 @sv.on_prefix('关闭')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     m = ''.join(re.findall('[\u4e00-\u9fa5]',message))
 
@@ -453,7 +453,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
             
 #群聊内 每月统计 功能
 @sv.on_fullmatch('每月统计')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     try:
         qid = ev.sender["user_id"]
         uid = await selectDB(ev.sender['user_id'],mode = "uid")
@@ -480,7 +480,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
         
 #群聊内 签到 功能
 @sv.on_fullmatch('签到')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     try:
         qid = ev.sender["user_id"]
         uid = await selectDB(ev.sender['user_id'],mode = "uid")
@@ -493,7 +493,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
 
 #群聊内 数据库v2 迁移至 数据库v3 的命令，一般只需要更新时执行一次
 @sv.on_fullmatch('优化Cookies')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     try:
         im = await OpCookies()
         await bot.send(ev,im,at_sender=True)
@@ -503,19 +503,19 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
 
 #群聊内 校验Cookies 是否正常的功能，不正常自动删掉
 @sv.on_fullmatch('校验全部Cookies')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     im = await CheckDB()
     await bot.send(ev,im)   
 
 #群聊内 数据库v1 迁移至 数据库v2 的命令，一般只需要更新时执行一次
 @sv.on_fullmatch('迁移Cookies')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     im = await TransDB()
     await bot.send(ev,im)   
 
 #群聊内 查询当前树脂状态以及派遣状态 的命令
 @sv.on_fullmatch('当前状态')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     try:
         uid = await selectDB(ev.sender['user_id'],mode = "uid")
         uid = uid[0]
@@ -529,7 +529,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
     
 #群聊内 查询uid 的命令
 @sv.on_prefix('uid')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     image = re.search(r"\[CQ:image,file=(.*),url=(.*)\]", str(ev.message))
     message = ev.message.extract_plain_text()
     uid = re.findall(r"\d+", message)[0]  # str
@@ -568,7 +568,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
             
 #群聊内 绑定uid 的命令，会绑定至当前qq号上
 @sv.on_prefix('绑定uid')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     uid = re.findall(r"\d+", message)[0]  # str
     await connectDB(ev.sender['user_id'],uid)
@@ -576,7 +576,7 @@ async def _(bot:HoshinoBot,  ev: CQEvent):
     
 #群聊内 绑定米游社通行证 的命令，会绑定至当前qq号上，和绑定uid不冲突，两者可以同时绑定
 @sv.on_prefix('绑定mys')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     message = ev.message.extract_plain_text()
     mys = re.findall(r"\d+", message)[0]  # str
     await connectDB(ev.sender['user_id'],None,mys)
@@ -644,7 +644,7 @@ async def _(bot,  ev):
 
 #群聊内 查询米游社通行证 的命令
 @sv.on_prefix('mys')
-async def _(bot:HoshinoBot,  ev: CQEvent):
+async def _(bot:RinYuuki,  ev: CQEvent):
     image = re.search(r"\[CQ:image,file=(.*),url=(.*)\]", str(ev.message))
     message = ev.message.extract_plain_text()
     uid = re.findall(r"\d+", message)[0]  # str
