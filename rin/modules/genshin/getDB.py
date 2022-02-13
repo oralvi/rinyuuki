@@ -1,25 +1,47 @@
-import sqlite3
-import sys,datetime
-
 from httpx import AsyncClient
 from shutil import copyfile
 
-from nonebot import *
-from bs4 import BeautifulSoup
+import sqlite3
 import requests,random,os,json,re
-import rin
-import asyncio
-import time
+import time,datetime,urllib
 import string
 import hashlib
-import base64
 
 mhyVersion = "2.11.1"
 
-FILE_PATH = os.path.abspath(os.path.join(os.getcwd(), "rin"))
+FILE_PATH = os.path.abspath(os.path.join(os.getcwd(), "hoshino"))
 BASE_PATH = os.path.dirname(__file__)
 BASE2_PATH = os.path.join(BASE_PATH,'mys')
 INDEX_PATH = os.path.join(BASE2_PATH,'index')
+
+async def config_check(func,mode = "CHECK"):
+    conn = sqlite3.connect('ID_DATA.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS Config
+            (Name TEXT PRIMARY KEY     NOT NULL,
+            Status      TEXT,
+            GroupList   TEXT,
+            Extra       TEXT);''')
+    c.execute("INSERT OR IGNORE INTO Config (Name,Status) \
+                            VALUES (?, ?)",(func,"on"))
+    if mode == "CHECK":
+        cursor = c.execute("SELECT * from Config WHERE Name = ?",(func,))
+        c_data = cursor.fetchall()
+        conn.close()
+        if c_data[0][1] != "off":
+            return True
+        else:
+            return False
+    elif mode == "OPEN":
+        c.execute("UPDATE Config SET Status = ? WHERE Name=?",("on",func))
+        conn.commit()
+        conn.close()
+        return True
+    elif mode == "CLOSED":
+        c.execute("UPDATE Config SET Status = ? WHERE Name=?",("off",func))
+        conn.commit()
+        conn.close()
+        return True
 
 async def get_alots(qid):
     conn = sqlite3.connect('ID_DATA.db')
@@ -73,9 +95,10 @@ async def OpenPush(uid,qid,status,mode):
 
 async def CheckDB():
     str = ''
+    invalidlist = []
     conn = sqlite3.connect('ID_DATA.db')
     c = conn.cursor()
-    cursor = c.execute("SELECT UID,Cookies  from NewCookiesTable")
+    cursor = c.execute("SELECT UID,Cookies,QID  from NewCookiesTable")
     c_data = cursor.fetchall()
     for row in c_data:
         try:
@@ -90,54 +113,15 @@ async def CheckDB():
             str = str + f"uid{row[0]}/mysid{mysid}的Cookies是正常的！\n"
         except:
             str = str + f"uid{row[0]}的Cookies是异常的！已删除该条Cookies！\n"
+            invalidlist.append([row[2],row[0]])
             c.execute("DELETE from NewCookiesTable where UID=?",(row[0],))
-            test = c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'CookiesCache'")
-            if test == 0:
-                pass
-            else:
+            try:
                 c.execute("DELETE from CookiesCache where Cookies=?",(row[1],))
+            except:
+                pass
     conn.commit()
     conn.close()
-    return str
-
-async def TransDB():
-    str = ''
-    conn = sqlite3.connect('ID_DATA.db')
-    c = conn.cursor()
-    test = c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'CookiesTable'")
-    if test == 0:
-        conn.commit()
-        conn.close()
-        return "你没有需要迁移的数据库。"
-    else:
-        c.execute('''CREATE TABLE IF NOT EXISTS NewCookiesTable
-            (UID INT PRIMARY KEY     NOT NULL,
-            Cookies     TEXT,
-            QID         INT,
-            StatusA     TEXT,
-            StatusB     TEXT,
-            StatusC     TEXT,
-            NUM         INT,
-            Extra       TEXT);''')
-        cursor = c.execute("SELECT * from CookiesTable")
-        c_data = cursor.fetchall()
-        for row in c_data:
-            try:
-                newcookies = ';'.join(filter(lambda x: x.split('=')[0] in ["cookie_token", "account_id"], [i.strip() for i in row[0].split(';')]))
-                aid = re.search(r"account_id=(\d*)", row[0])
-                mysid_data = aid.group(0).split('=')
-                mysid = mysid_data[1]
-                mys_data = await GetMysInfo(mysid,row[0])
-                mys_data = mys_data[0]
-                uid = mys_data['data']['list'][0]['game_role_id']
-                c.execute("INSERT OR IGNORE INTO NewCookiesTable (Cookies,UID,StatusA,StatusB,StatusC,NUM) \
-                            VALUES (?, ?,?,?,?,?)",(newcookies,uid,"off","off","off",140))
-                str = str + f"uid{uid}/mysid{mysid}的Cookies已转移成功！\n"
-            except:
-                str = str + f"uid{uid}/mysid{mysid}的Cookies是异常的！已删除该条Cookies！\n"
-        conn.commit()
-        conn.close()
-        return str
+    return [str,invalidlist]
 
 async def connectDB(userid,uid = None,mys = None):
     conn = sqlite3.connect('ID_DATA.db')
@@ -178,19 +162,25 @@ async def selectDB(userid,mode = "auto"):
         elif mode == "mys":
             return [row[2],3]
             
-def deletecache():
+async def deletecache():
+    try:
+        copyfile("ID_DATA.db", "ID_DATA_bak.db")
+        print("————数据库成功备份————")
+    except:
+        print("————数据库备份失败————")
+    
     try:
         conn = sqlite3.connect('ID_DATA.db')
         c = conn.cursor()
         c.execute("DROP TABLE CookiesCache")
         c.execute("UPDATE NewCookiesTable SET Extra = ? WHERE Extra=?",(None,"limit30"))
-        copyfile("ID_DATA.db", "ID_DATA_bak.db")
         c.execute('''CREATE TABLE IF NOT EXISTS CookiesCache
         (UID TEXT PRIMARY KEY,
         MYSID         TEXT,
         Cookies       TEXT);''')
         conn.commit()
         conn.close()
+        print("————UID查询缓存已清空————")
     except:
         print("\nerror\n")
     
@@ -200,6 +190,7 @@ def deletecache():
         c.execute("UPDATE UseridDict SET lots=NULL")
         conn.commit()
         conn.close()
+        print("————御神签缓存已清空————")
     except:
         print("\nerror\n")
 
@@ -317,46 +308,6 @@ async def cookiesDB(uid,Cookies,qid):
     conn.commit()
     conn.close()
 
-async def OpCookies():
-    str = ""
-    conn = sqlite3.connect('ID_DATA.db')
-    c = conn.cursor()
-    test = c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'NewCookies'")
-    if test == 0:
-        conn.commit()
-        conn.close()
-        return "你没有需要优化的数据库。"
-    else:
-        c.execute('''CREATE TABLE IF NOT EXISTS NewCookiesTable
-            (UID INT PRIMARY KEY     NOT NULL,
-            Cookies     TEXT,
-            QID         INT,
-            StatusA     TEXT,
-            StatusB     TEXT,
-            StatusC     TEXT,
-            NUM         INT,
-            Extra       TEXT);''')
-        cursor = c.execute("SELECT * from NewCookies")
-        c_data = cursor.fetchall()
-        for row in c_data:
-            try:
-                newcookies = ';'.join(filter(lambda x: x.split('=')[0] in ["cookie_token", "account_id"], [i.strip() for i in row[0].split(';')]))
-                aid = re.search(r"account_id=(\d*)", row[0])
-                mysid_data = aid.group(0).split('=')
-                mysid = mysid_data[1]
-                mys_data = await GetMysInfo(mysid,row[0])
-                mys_data = mys_data[0]
-                uid = mys_data['data']['list'][0]['game_role_id']
-                c.execute("INSERT OR IGNORE INTO NewCookiesTable (Cookies,UID,StatusA,StatusB,StatusC,QID,NUM) \
-                            VALUES (?, ?,?,?,?,?,?)",(newcookies,row[1],row[2],row[3],"off",row[4],row[5]))
-                str = str + f"uid{row[1]}的Cookies已转移成功！\n"
-            except:
-                str = str + f"uid{row[1]}的Cookies是异常的！已删除该条Cookies！\n"
-        conn.commit()
-        conn.close()
-        return str
-            
-    
 async def OwnerCookies(uid):
     conn = sqlite3.connect('ID_DATA.db')
     c = conn.cursor()
@@ -368,6 +319,14 @@ async def OwnerCookies(uid):
         return
     
     return cookies
+
+
+
+
+
+
+
+
 
 
 def random_hex(length):
@@ -414,6 +373,7 @@ async def GetDaily(Uid,ServerID="cn_gf01"):
                     'Referer': 'https://webstatic.mihoyo.com/',
                     "Cookie": await OwnerCookies(Uid)})
             data = json.loads(req.text)
+            #print(data)
         return data
     except requests.exceptions.SSLError:
         try:
@@ -528,6 +488,7 @@ async def GetInfo(Uid,ck,ServerID="cn_gf01"):
                     'Referer': 'https://webstatic.mihoyo.com/',
                     "Cookie": ck})
             data = json.loads(req.text)
+        #print(data)   
         return data
     except requests.exceptions.SSLError:
         try:
@@ -677,39 +638,38 @@ async def GetAudioInfo(name,audioid,language = "cn"):
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
                 'Referer': 'https://genshin.minigg.cn/index.html'})
     return req.text
-    
+
 async def GetWeaponInfo(name,level = None):
     async with AsyncClient() as client:
         req = await client.get(
-            url="https://api.minigg.cn/weapons?query=" + name + "&stats=" + level if level else "https://api.minigg.cn/weapons?query=" + name,
+            url="https://info.minigg.cn/weapons?query=" + name + "&stats=" + level if level else "https://info.minigg.cn/weapons?query=" + name,
             headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-                'Referer': 'https://genshin.minigg.cn/index.html'})
-    data = jsonfy(req.text)
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'})
+    data = json.loads(req.text)
     return data
 
-async def GetEnemiesInfo(name):
-    baseurl = "https://api.minigg.cn/enemies?query="
+async def GetMiscInfo(mode,name):
+    url = "https://info.minigg.cn/{}?query={}".format(mode,urllib.parse.quote(name, safe=''))
     async with AsyncClient() as client:
         req = await client.get(
-            url = baseurl + name,
+            url = url,
             headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-                'Referer': 'https://genshin.minigg.cn/index.html'})
-        data = jsonfy(req.text)
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'})
+    data = json.loads(req.text)
     return data
 
 async def GetCharInfo(name,mode = "char",level = None):
     url2 = None
     data2 = None
-    baseurl = "https://api.minigg.cn/characters?query="
+    baseurl = "https://info.minigg.cn/characters?query="
     if mode == "talents":
-        url = "https://api.minigg.cn/talents?query=" + name
+        url = "https://info.minigg.cn/talents?query=" + name
     elif mode == "constellations":
-        url = "https://api.minigg.cn/constellations?query=" + name
+        url = "https://info.minigg.cn/constellations?query=" + name
     elif mode == "costs":
         url = baseurl + name + "&costs=1"
-        url2 = "https://api.minigg.cn/talents?query=" + name + "&costs=1"
+        url2 = "https://info.minigg.cn/talents?query=" + name + "&costs=1"
+        url3 = "https://info.minigg.cn/talents?query=" + name + "&matchCategories=true"
     elif level:
         url = baseurl + name + "&stats=" + level
     else:
@@ -722,7 +682,17 @@ async def GetCharInfo(name,mode = "char",level = None):
                 headers={
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
                     'Referer': 'https://genshin.minigg.cn/index.html'})
-            data2 = jsonfy(req.text)
+            data2 = json.loads(req.text)
+            if "errcode"  not in data2:
+                pass
+            else:
+                async with AsyncClient() as client:
+                    req = await client.get(
+                        url = url3,
+                        headers={
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+                            'Referer': 'https://genshin.minigg.cn/index.html'})
+                    data2 = json.loads(req.text)
 
     async with AsyncClient() as client:
         req = await client.get(
@@ -730,18 +700,20 @@ async def GetCharInfo(name,mode = "char",level = None):
             headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
                 'Referer': 'https://genshin.minigg.cn/index.html'})
-        data = jsonfy(req.text)
-        if data != "undefined":
-            pass
-        else:
-            async with AsyncClient() as client:
-                req = await client.get(
-                    url = baseurl + name + "&matchCategories=true",
-                    headers={
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-                        'Referer': 'https://genshin.minigg.cn/index.html'})
-                data = req.text
-
+        try:
+            data = json.loads(req.text)
+            if "errcode"  not in data:
+                pass
+            else:
+                async with AsyncClient() as client:
+                    req = await client.get(
+                        url = url + "&matchCategories=true",
+                        headers={
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+                            'Referer': 'https://genshin.minigg.cn/index.html'})
+                    data = json.loads(req.text)
+        except:
+            data = None
     return data if data2 == None else [data,data2]
 
 async def GetGenshinEvent(mode = "List"):
@@ -759,8 +731,10 @@ async def GetGenshinEvent(mode = "List"):
     data = json.loads(req.text)
     return data
 
+'''
 def jsonfy(s:str)->object:
-    s = s.replace("stats: [Function (anonymous)]","")
+    s = s.replace("stats: [Function (anonymous)]","").replace("(","（").replace(")","）")
     #此函数将不带双引号的json的key标准化
     obj = eval(s, type('js', (dict,), dict(__getitem__=lambda s, n: n))())
     return obj
+'''

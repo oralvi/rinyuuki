@@ -1,4 +1,4 @@
-import time
+import time,re
 from base64 import b64encode
 from io import BytesIO
 
@@ -6,7 +6,6 @@ import urllib
 import math
 import threading
 import requests
-from bs4 import BeautifulSoup
 from wordcloud import WordCloud
 import numpy as np
 
@@ -1163,6 +1162,7 @@ async def draw_pic(uid,nickname,image = None,mode = 2,role_level = None):
             char_img_icon = i["image"]
 
             char_weapon_star = i['weapon']['rarity']
+            char_weapon_level = i['weapon']['level']
             char_weapon_jinglian = i['weapon']['affix_level']
             char_weapon_icon = i['weapon']['icon']
 
@@ -1192,7 +1192,7 @@ async def draw_pic(uid,nickname,image = None,mode = 2,role_level = None):
             weapon_bg = Image.open(getText(char_weapon_star,3))
             charpic.paste(weapon_bg,(72,10),weapon_bg)
             charpic_temp.paste(char_img,(81,13),charpic_mask)
-            charpic_temp.paste(char_stand,(335,-99),char_stand_mask)
+            charpic_temp.paste(char_stand,(395,-99),char_stand_mask)
             charpic_temp.paste(char_fg,(0,0),char_fg)
             charpic_temp.paste(weapon_img,(141,72),weaponpic_mask)
             #temp = Image.composite(weapon_img, basedb, weaponpic_mask)
@@ -1224,13 +1224,14 @@ async def draw_pic(uid,nickname,image = None,mode = 2,role_level = None):
 
             char_draw = ImageDraw.Draw(charpic)
 
-            char_draw.text((182,39),i["name"],new_color,ys_font(22))
-            char_draw.text((272,45),f'Lv.{str(char_level)}',new_color,ys_font(18))
+            char_draw.text((188,30),i["name"] + " " + f'Lv.{str(char_level)}',new_color,ys_font(22))
+            #char_draw.text((272,45),f'Lv.{str(char_level)}',new_color,ys_font(18))
 
             #char_draw.text((104.5,91.5),f'{str(char_weapon_jinglian)}',new_color,ys_font(10))
-            char_draw.text((267,77),f'{str(char_mingzuo)}',new_color,ys_font(18))
 
-            char_draw.text((209,77),f'{str(i["fetter"])}' if str(char_name) != "旅行者" else "10",new_color,ys_font(18))
+            char_draw.text((222,87),f'{str(i["fetter"])}' if str(char_name) != "旅行者" else "10",new_color,ys_font(15),anchor = "mm")
+            char_draw.text((255,87),f'{str(char_mingzuo)}',new_color,ys_font(15),anchor = "mm")
+            char_draw.text((218,67),f'{str(char_weapon_level)}级{str(char_weapon_jinglian)}精',new_color,ys_font(15),anchor = "lm")
             char_crop = (0,800+110*num)
             num += 1
             bg_img.paste(charpic,char_crop,charpic)
@@ -1266,31 +1267,36 @@ def create_rounded_rectangle_mask(rectangle, radius):
 
 async def draw_event_pic():
     raw_data = await GetGenshinEvent("List")
-    raw_time_data = await GetGenshinEvent("Calendar")
+    raw_time_data = await GetGenshinEvent("Content")
+    #raw_time_data = await GetGenshinEvent("Calendar")
 
     data = raw_data["data"]["list"][1]["list"]
 
     event_data = {"gacha_event":[],"normal_event":[],"other_event":[]}
     for k in data:
-        for i in raw_time_data["data"]["act_list"]:
-            if i["name"] == k["title"]:
-                k["act_begin_time"] = i["act_begin_time"]
-                k["act_end_time"] = i["act_end_time"]
-            elif "神铸赋形" in k["title"] and "神铸赋形" in i["name"]:
-                k["act_begin_time"] = i["act_begin_time"]
-                k["act_end_time"] = i["act_end_time"]
-            elif "传说任务" in k["title"]:
-                k["act_begin_time"] = k["start_time"]
-                k["act_end_time"] = "永久开放"
-            elif k["subtitle"] in i["name"]:
-                k["act_begin_time"] = i["act_begin_time"]
-                k["act_end_time"] = i["act_end_time"]
-            else:
-                k["act_begin_time"] = "{}-{}-{} {}".format(k["start_time"].split()[0].split("-")[0], 
-                                                           k["start_time"].split()[0].split("-")[1],
-                                                           str(int(k["start_time"].split()[0].split("-")[2])+2),
-                                                           "10:00:00(?)")
-                k["act_end_time"] = k["end_time"]
+        for i in raw_time_data["data"]["list"]:
+            if k["title"] in i["title"]:
+                time_data = re.findall(r"[0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", i["content"])
+                time_limit_end = re.findall(r"起至[0-9]{1}.[0-9]{1}版本结束", i["content"])
+                time_limit_start = re.findall(r"[0-9]{1}.[0-9]{1}版本更新后 ~", i["content"])
+                if len(time_data) == 2:
+                    k["act_begin_time"] = time_data[0]
+                    k["act_end_time"] = time_data[1]
+                elif len(time_data) == 1 and len(time_limit_end) == 1:
+                    k["act_begin_time"] = time_data[0]
+                    k["act_end_time"] = time_limit_end[0]
+                elif len(time_data) == 1 and len(time_limit_start) == 1:
+                    k["act_begin_time"] = time_limit_start[0][:-2]
+                    k["act_end_time"] = time_data[0]
+                elif len(time_data) == 1:
+                    k["act_begin_time"] = time_data[0]
+                    k["act_end_time"] = "永久开放"
+                elif len(time_data) > 2:
+                    k["act_begin_time"] = time_data[0]
+                    k["act_end_time"] = k["end_time"]
+                elif len(time_data) == 0:
+                    k["act_begin_time"] = k["start_time"] + "(?)"
+                    k["act_end_time"] = k["end_time"] + "(?)"
 
         if "冒险助力礼包" in k["title"] or "纪行" in k["title"]:
             continue
