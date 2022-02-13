@@ -3,8 +3,8 @@
 
 ## 简介
 
-**结城凛:** 基于 [nonebot](http://nonebot.cqp.moe) 框架，按照[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
-进行魔改的以pcr为主信息聚合推送查询用qq机器人。
+**结城凛:** 魔改[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
+的以pcr为主信息聚合推送查询用qq机器人。
 
 
 
