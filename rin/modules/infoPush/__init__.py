@@ -37,12 +37,11 @@ class Info(RSS):
 
 #添加推送在此字典添加service和路由
 _inf_svs = {
-    Service('pcr国服推送') : [
-        Info('/pcr/news-cn'), 
-        Info('/bilibili/user/dynamic/353840826')
+    Service('原神推送') : [
+        Info('/bilibili/user/dynamic/401742377')
         ],
-    Service('B站up动态') : [
-        Info('/bilibili/user/dynamic/282994')
+    Service('pcr日服翻译推送') : [
+        Info('/bilibili/user/dynamic/1731293061')
         ]
 
 }
