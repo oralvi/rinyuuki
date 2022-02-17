@@ -77,5 +77,5 @@ async def concat_head(bot: RinYuuki, ev: CQEvent):
         if add(picfile, outpath):
             await bot.send(ev, R.image(outpath))
         else:
-            fail_pic = path.join(path.dirname(__file__), 'data', '接头失败.png')
+            fail_pic = path.join(path.dirname(__file__), 'conheaddata', '接头失败.png')
             await bot.send(ev, R.image(fail_pic))

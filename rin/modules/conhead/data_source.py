@@ -23,30 +23,30 @@ class KyaruHead:
 
     @property
     def img(self):
-        head = path.join(path.dirname(__file__), 'data/head', self.head_name, f'{self.head_name}.png')
+        head = path.join(path.dirname(__file__), 'conheaddata/head', self.head_name, f'{self.head_name}.png')
         return Image.open(head)
 
     @classmethod
     def from_name(cls, head_name):
-        dat_path = path.join(path.dirname(__file__), 'data/head', head_name, 'dat.json')
-        pic_path = path.join(path.dirname(__file__), 'data/head', head_name, f'{head_name}.png')
+        dat_path = path.join(path.dirname(__file__), 'conheaddata/head', head_name, 'dat.json')
+        pic_path = path.join(path.dirname(__file__), 'conheaddata/head', head_name, f'{head_name}.png')
         dat = load_config(dat_path)
         cqcode = R.image(pic_path)
         return cls(head_name, dat['angle'], dat['face_width'], dat['chin_tip_x'], dat['chin_tip_y'], cqcode)
 
     @staticmethod
     def exist_head(head_name):
-        if not path.exists(path.join(path.dirname(__file__), 'data/head', head_name)):
+        if not path.exists(path.join(path.dirname(__file__), 'conheaddata/head', head_name)):
             return False
-        if not path.exists(path.join(path.dirname(__file__), 'data/head', head_name, f'{head_name}.png')):
+        if not path.exists(path.join(path.dirname(__file__), 'conheaddata/head', head_name, f'{head_name}.png')):
             return False
         return True
 
     @classmethod
     def rand_head(cls):
         heads = []
-        for i in listdir(path.join(path.dirname(__file__), 'data/head')):
-            if path.isdir(path.join(path.dirname(__file__), 'data/head', i)):
+        for i in listdir(path.join(path.dirname(__file__), 'conheaddata/head')):
+            if path.isdir(path.join(path.dirname(__file__), 'conheaddata/head', i)):
                 heads.append(i)
         return cls.from_name(choice(heads))
 
@@ -57,8 +57,8 @@ def auto_head(face_dat: dict) -> KyaruHead:
 
 def gen_head():
     heads = []
-    for i in listdir(path.join(path.dirname(__file__), 'data/head')):
-        if path.isdir(path.join(path.dirname(__file__), 'data/head', i)):
+    for i in listdir(path.join(path.dirname(__file__), 'conheaddata/head')):
+        if path.isdir(path.join(path.dirname(__file__), 'conheaddata/head', i)):
             heads.append(i)
     shuffle(heads)
     for head in heads:

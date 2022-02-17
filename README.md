@@ -116,6 +116,8 @@ screen 分两个，一个framework，一个rin
 
 随后run.py即可
 
+更新：git pull https://github.com/oralvi/rinyuuki.git --no-rebase
+
 ## 友情链接
 
 **干炸里脊资源站**: https://redive.estertion.win/
