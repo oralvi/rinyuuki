@@ -9,7 +9,7 @@ import hashlib
 
 mhyVersion = "2.11.1"
 
-FILE_PATH = os.path.abspath(os.path.join(os.getcwd(), "hoshino"))
+FILE_PATH = os.path.abspath(os.path.join(os.getcwd(), "rin"))
 BASE_PATH = os.path.dirname(__file__)
 BASE2_PATH = os.path.join(BASE_PATH,'mys')
 INDEX_PATH = os.path.join(BASE2_PATH,'index')

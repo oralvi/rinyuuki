@@ -8,13 +8,14 @@ from lxml import etree
 from rin.service import Service
 from rin._util import RSS, load_config, save_config, broadcast
 
+
 class Info(RSS):
-    def __init__(self,route) -> None:
+    def __init__(self, route) -> None:
         super().__init__()
-        self.limit = 1 #info类信息只需一条
-        self._latest : str = ''
+        self.limit = 1  # info类信息只需一条
+        self._latest: str = ''
         self.route = route
-    
+
     def parse_xml(self) -> Dict:
         rss = etree.XML(self.xml)
         item = rss.xpath('/rss/channel/item')[0]
@@ -23,30 +24,33 @@ class Info(RSS):
         link = item.find('.link').text.strip()
         pubDate = item.find('.pubDate').text.strip()
         return {
-            "title" : title,
-            "desc" : desc,
-            "link" : link,
-            "pubDate" : pubDate
+            "title": title,
+            "desc": desc,
+            "link": link,
+            "pubDate": pubDate
         }
-    def check_update(self) -> bool: #info类可以通过pubDate判断是否更新
+
+    def check_update(self) -> bool:  # info类可以通过pubDate判断是否更新
         if self.parse_xml().get('pubDate') != self._latest:
             self._latest = self.parse_xml().get('pubDate')
             return True
         else:
-            return False          
+            return False
 
-#添加推送在此字典添加service和路由
+        # 添加推送在此字典添加service和路由
+
+
 _inf_svs = {
-    Service('原神推送') : [
+    Service('原神推送'): [
         Info('/bilibili/user/dynamic/401742377')
-        ],
-    Service('pcr日服翻译推送') : [
+    ],
+    Service('pcr日服翻译推送'): [
         Info('/bilibili/user/dynamic/1731293061')
-        ]
+    ]
 
 }
 
-_latest_path = path.join(path.dirname(__file__),'latest_data.json')
+_latest_path = path.join(path.dirname(__file__), 'latest_data.json')
 _latest_data = load_config(_latest_path) if load_config(_latest_path) else defaultdict(str)
 infos = []
 
@@ -55,6 +59,7 @@ for sv in _inf_svs:
 
 for info in infos:
     info._latest = _latest_data.get(info.route, '')
+
 
 @nonebot.scheduler.scheduled_job('cron', minute='*/5', second='30')
 async def check():
@@ -71,7 +76,6 @@ async def check():
                 data = info.parse_xml()
                 title = data['title']
                 link = data['link']
-                await broadcast(f'{title}\n{link}',sv_name=sv.name)
+                await broadcast(f'{title}\n{link}', sv_name=sv.name)
             else:
                 sv.logger.info(f'未检查到{sv.name}消息更新')
-
