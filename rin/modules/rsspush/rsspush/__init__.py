@@ -111,7 +111,7 @@ async def delrss(session: CommandSession):
     session.finish(f'删除订阅{name}成功')
 
 
-@sv.scheduled_job('interval', minutes=3, jitter=20)
+@sv.scheduled_job('cron', minute='*/5', jitter=20)
 async def push_rss():
     bot = sv.bot
     glist = await sv.get_enable_groups()
