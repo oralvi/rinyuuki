@@ -10,7 +10,7 @@ from .data_source import generate_gif
 from rin._res import Res as R
 
 sv = Service('Rua')
-data_dir = path.join(path.dirname(__file__), 'data')
+data_dir = path.join(path.dirname(__file__), 'db')
 
 @sv.on_message()
 async def creep(bot: RinYuuki, ev: CQEvent):
