@@ -75,7 +75,7 @@ async def addrss(session: CommandSession):
     name = args.name
     url = BASE_URL+args.url if args.rsshub else args.url
     try:
-        stats = await head(url, timeout=5, allow_redirects=True)
+        stats = await head(url, timeout=5, follow_redirects=True)
     except Exception as e:
         sv.logger.exception(e)
         sv.logger.error(type(e))
