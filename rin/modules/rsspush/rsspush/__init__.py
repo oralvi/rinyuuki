@@ -5,8 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple
 from nonebot.argparse import ArgumentParser
 from nonebot import CommandSession
-from hoshino import Service
-from hoshino.util import pic2b64
+from rin import Service
+from rin.util import pic2b64
 from .aiohttpx import head
 from .data import Rss, Rssdata, BASE_URL
 sv = Service('rss', enable_on_default=False)
@@ -15,7 +15,7 @@ fontpath = os.path.join(os.path.dirname(__file__), 'simhei.ttf')
 font = ImageFont.truetype(fontpath, 20)
 
 
-# https://github.com/AkiraXie/HoshinoBot/blob/91fd4af00b31b21cc102b5a07b27ff7df12abb99/hoshino/util.py#L65
+# https://github.com/AkiraXie/rinBot/blob/91fd4af00b31b21cc102b5a07b27ff7df12abb99/rin/util.py#L65
 def get_text_size(text: str, font: ImageFont.ImageFont, padding: Tuple[int, int, int, int] = (20, 20, 20, 20), spacing: int = 5) -> tuple:
     '''
     返回文本转图片的图片大小
@@ -31,7 +31,7 @@ def get_text_size(text: str, font: ImageFont.ImageFont, padding: Tuple[int, int,
     return ret[0]+padding[0]+padding[1], ret[1]+padding[2]+padding[3]
 
 
-# https://github.com/AkiraXie/HoshinoBot/blob/91fd4af00b31b21cc102b5a07b27ff7df12abb99/hoshino/util.py#L80
+# https://github.com/AkiraXie/rinBot/blob/91fd4af00b31b21cc102b5a07b27ff7df12abb99/rin/util.py#L80
 def text2pic(text: str, font: ImageFont.ImageFont, padding: Tuple[int, int, int, int] = (20, 20, 20, 20), spacing: int = 5) -> Image.Image:
     '''
     返回一个文本转化后的`Image`实例
