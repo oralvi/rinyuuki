@@ -5,8 +5,10 @@ from typing import List, Dict, Optional
 import feedparser
 from feedparser import FeedParserDict
 import peewee as pw
+import rin
 from .aiohttpx import get
-BASE_URL = "https://rsshub.akiraxie.me/"
+
+BASE_URL = rin.config.RSS_URL
 
 
 class Rss:
