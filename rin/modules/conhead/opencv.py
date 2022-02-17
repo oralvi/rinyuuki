@@ -7,7 +7,7 @@ from PIL import Image
 # opencv无法使用中文路径
 #PicPath = config.PIC_PATH + 'JieTou/'
 
-def add(filename, outfile, cascade_file=os.path.dirname(os.path.abspath(__file__))+"/data/lbpcascade_animeface.xml"):
+def add(filename, outfile, cascade_file=os.path.dirname(os.path.abspath(__file__))+"/conheaddata/lbpcascade_animeface.xml"):
     print(cascade_file)
     cascade = cv2.CascadeClassifier(cascade_file)
     cvimg = cv2.imread(filename, cv2.IMREAD_COLOR)
